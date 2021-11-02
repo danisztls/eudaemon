@@ -55,7 +55,10 @@ def agent():
 
 # Act
 
-# TODO: Log out user when hard limit is reached
+# Log Out
+subprocess.run(["gnome-session-quit", "logout"])
+# subprocess.run(["gnome-session-quit", "logout --force"])
+# subprocess.run([ "dbus-send", "--session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1"])
 
 # Analyze
 
