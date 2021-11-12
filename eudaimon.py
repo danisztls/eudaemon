@@ -9,6 +9,7 @@ __license__ = "MIT"
 
 import asyncio
 import time
+import subprocess
 
 # Design
 
@@ -21,26 +22,22 @@ import time
 # NOTE: Will not have the time to develop a complex software. Need this in a hurry.
 
 # Monitor
-
-# TODO: Implement async clock procedure.
-
-period = 60 # 1 min?
-
-def agent():
-    def worker():
-        loop.call_later(period, worker)
-        ...        
-        return
-
-    loop = asyncio.new_event_loop()
-    loop.call_soon(worker)
-    loop.run_forever()
-    loop.close()
-
-    return
-
+def monitor_activity():
+    print("Implement me")
 
 # TODO: Detect user activity. Use mouse/keyboard activity.
+
+""" This is a clock. It runs at a periodic rate. """
+delay = 60  # 1 minute
+def clock(tick):
+    loop.call_later(delay, clock, tick + 1)
+    monitor_activity()
+    return
+
+loop = asyncio.new_event_loop()
+loop.call_soon(clock, 0)
+loop.run_forever()
+loop.close()
 
 # Log
 
@@ -56,14 +53,13 @@ def agent():
 # Act
 
 # Log Out
-subprocess.run(["gnome-session-quit", "logout"])
+# subprocess.run(["gnome-session-quit", "logout"])
 # subprocess.run(["gnome-session-quit", "logout --force"])
 # subprocess.run([ "dbus-send", "--session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1"])
 
 # Analyze
 
 # TODO: Graph logged time. 
-
 
 # Strings.
 
