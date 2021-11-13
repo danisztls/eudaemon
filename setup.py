@@ -10,5 +10,6 @@ setup(
     url='',
     platforms='Linux',
     license='GPLv3',
+    license_files = ('LICENSE',),
     py_modules=['eudaemon'],
 )
