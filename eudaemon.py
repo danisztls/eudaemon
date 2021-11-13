@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Monitor and log usage, detect bad habits, warn user about it and act as last resort on extreme cases.
@@ -10,6 +10,8 @@ __license__ = "MIT"
 import asyncio
 import time
 import subprocess
+import os
+import dbus
 
 # Design
 
@@ -17,25 +19,41 @@ import subprocess
 
 # 2. Everything nowadays farms for our attention. I'm particularly vulnerable to this and addicted to games.
 
-# Implementation
+"""Detect desktop enviroment and initialize accordingly."""
+def get_desktop_env():
+    # LATER: Detect X11, Gnome and KDE Wayland.
+    return "gnome"
 
-# NOTE: Will not have the time to develop a complex software. Need this in a hurry.
+desktop_env = get_desktop_env()
 
-# Monitor
-def monitor_activity():
-    print("Implement me")
+if (desktop_env == "gnome"):
+    session_bus = dbus.SessionBus()
+    bus_object = session_bus.get_object('org.gnome.Mutter.IdleMonitor', '/org/gnome/Mutter/IdleMonitor/Core')
+    bus_interface = dbus.Interface(bus_object, 'org.gnome.Mutter.IdleMonitor')
 
-# TODO: Detect user activity. Use mouse/keyboard activity.
+"""Detect user activity/idleness."""
+class Monitor():
+    def get_idle_time():
+        if (desktop_env == "gnome"):
+            return bus_interface.GetIdletime() / 1000
 
-""" This is a clock. It runs at a periodic rate. """
-delay = 60  # 1 minute
-def clock(tick):
-    loop.call_later(delay, clock, tick + 1)
-    monitor_activity()
+        else:
+            # LATER: Use https://github.com/g0hl1n/xprintidle/ for X11
+            # LATER: Use https://github.com/swaywm/swayidle for KDE Wayland
+            return "not implemented yet"
+
+    def print_idle():
+        idle_time = Monitor.get_idle_time()
+        print(idle_time)
+
+""" A clock that runs a sub-procedure at a periodic rate. """
+def clock(delay=1):
+    loop.call_later(delay, clock, delay)
+    Monitor.print_idle()
     return
 
 loop = asyncio.new_event_loop()
-loop.call_soon(clock, 0)
+loop.call_soon(clock, 1)
 loop.run_forever()
 loop.close()
 
