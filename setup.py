@@ -1,0 +1,12 @@
+from distutils.core import setup
+
+setup(
+    version=1.0,
+    name='eudaemon',
+    description='Monitor activity and help user to be conscious about it and to take positive action.',
+    author='Daniel Souza',
+    author_email='me@posix.dev.br',
+    url='',
+    platforms='Linux',
+    license='GPLv3'
+)
