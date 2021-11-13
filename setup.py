@@ -9,5 +9,6 @@ setup(
     author_email='me@posix.dev.br',
     url='',
     platforms='Linux',
-    license='GPLv3'
+    license='GPLv3',
+    py_modules=['eudaemon'],
 )
