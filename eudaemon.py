@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Monitor and log usage, detect bad habits, warn user about it and act as last resort on extreme cases.
+Monitor and log activity, improve awareness and empower user to improve it's habits.
 """
 
 __author__  = "Daniel Souza <me@posix.dev.br>"
@@ -11,7 +11,10 @@ import asyncio
 import time
 import subprocess
 import os
-import dbus
+import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
+
+# dbus-python is deprecated, use dasbus instead
+# https://dasbus.readthedocs.io/en/latest/index.html
 
 # Design
 
