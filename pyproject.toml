@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "eudaemon"
+version = "0.1.0"
+description = "Monitor activity and help user to be conscious about it and to take positive action."
+authors = ["Daniel Souza <me@posix.dev.br>"]
+license = "GPLv3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
