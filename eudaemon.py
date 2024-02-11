@@ -16,12 +16,6 @@ import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
 # dbus-python is deprecated, use dasbus instead
 # https://dasbus.readthedocs.io/en/latest/index.html
 
-# Design
-
-# 1. I stay for hours sitted in the computer. Doing exercises from time to time it is critical for blood flow and health. When I'm focused I have no control over that.
-
-# 2. Everything nowadays farms for our attention. I'm particularly vulnerable to this and addicted to games.
-
 """Detect desktop enviroment and initialize accordingly."""
 def get_desktop_env():
     # LATER: Detect X11, Gnome and KDE Wayland.
@@ -60,13 +54,6 @@ loop.call_soon(clock, 1)
 loop.run_forever()
 loop.close()
 
-# Log
-
-# TODO: Set up a database.
-
-# A TSDB like InfluxDB would be nice to have as a complementary integration but to bloated to have as default.
-# The ideal would a no-server local DB. SQLite in the lack of a better alternative.
-
 # Warn
 
 # TODO: Send desktop notifications with libnotify
@@ -78,12 +65,8 @@ loop.close()
 # subprocess.run(["gnome-session-quit", "logout --force"])
 # subprocess.run([ "dbus-send", "--session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1"])
 
-# Analyze
-
-# TODO: Graph logged time. 
-
 # Strings.
 
-# Whatever you're doing prolly can wait t'll tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
+# Whatever you're doing prolly can wait till tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
 
 # Oww, champion. You're playing too much. Haven't got anything more important to do gonk?
