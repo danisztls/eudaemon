@@ -18,26 +18,19 @@ import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
 
 """Detect desktop enviroment and initialize accordingly."""
 def get_desktop_env():
-    # LATER: Detect X11, Gnome and KDE Wayland.
+    # TODO: Detect if X11, Gnome or KDE Wayland.
     return "gnome"
 
-desktop_env = get_desktop_env()
-
-if (desktop_env == "gnome"):
-    session_bus = dbus.SessionBus()
-    bus_object = session_bus.get_object('org.gnome.Mutter.IdleMonitor', '/org/gnome/Mutter/IdleMonitor/Core')
-    bus_interface = dbus.Interface(bus_object, 'org.gnome.Mutter.IdleMonitor')
-
-"""Detect user activity/idleness."""
+"""Detect user idleness."""
 class Monitor():
     def get_idle_time():
         if (desktop_env == "gnome"):
             return bus_interface.GetIdletime() / 1000
 
         else:
-            # LATER: Use https://github.com/g0hl1n/xprintidle/ for X11
-            # LATER: Use https://github.com/swaywm/swayidle for KDE Wayland
-            return "not implemented yet"
+            # TODO: Use https://github.com/g0hl1n/xprintidle/ for X11
+            # TODO: Use https://github.com/swaywm/swayidle for KDE Wayland
+            return "not implemented"
 
     def print_idle():
         idle_time = Monitor.get_idle_time()
@@ -48,11 +41,6 @@ def clock(delay=1):
     loop.call_later(delay, clock, delay)
     Monitor.print_idle()
     return
-
-loop = asyncio.new_event_loop()
-loop.call_soon(clock, 1)
-loop.run_forever()
-loop.close()
 
 # Warn
 
@@ -69,4 +57,18 @@ loop.close()
 
 # Whatever you're doing prolly can wait till tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
 
-# Oww, champion. You're playing too much. Haven't got anything more important to do gonk?
+def main():
+    desktop_env = get_desktop_env()
+
+    if (desktop_env == "gnome"):
+        session_bus = dbus.SessionBus()
+        bus_object = session_bus.get_object('org.gnome.Mutter.IdleMonitor', '/org/gnome/Mutter/IdleMonitor/Core')
+        bus_interface = dbus.Interface(bus_object, 'org.gnome.Mutter.IdleMonitor')
+
+    loop = asyncio.new_event_loop()
+    loop.call_soon(clock, 1)
+    loop.run_forever()
+    loop.close()
+
+if __name__ == "__main__":
+    main()
