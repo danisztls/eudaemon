@@ -3,8 +3,9 @@ name = "eudaemon"
 version = "0.1.0"
 description = "Monitor activity and help user to be conscious about it and to take positive action."
 authors = ["Daniel Souza <me@posix.dev.br>"]
-license = "GPLv3"
+homepage = "https://github.com/danisztls/eudaemon"
 readme = "README.md"
+license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.11"

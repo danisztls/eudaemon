@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
-Monitor and log activity, improve awareness and empower user to improve it's habits.
+Eudaemon: Monitor and log activity, improve awareness and empower user to improve it's habits.
 """
-
-__author__  = "Daniel Souza <me@posix.dev.br>"
-__license__ = "MIT"
 
 import asyncio
 import time
