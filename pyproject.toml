@@ -9,6 +9,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 
+[tool.poetry.scripts]
+eudaemon = 'eudaemon:main'
 
 [build-system]
 requires = ["poetry-core"]
