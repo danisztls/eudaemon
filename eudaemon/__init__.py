@@ -8,35 +8,42 @@ import asyncio
 import time
 import subprocess
 import os
-from collections import deque 
-import dbus # https://dbus.freedesktop.org/doc/dbus-python/
+from collections import deque
+import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
 
 # TODO: dbus-python is deprecated, use dasbus instead
 # https://dasbus.readthedocs.io/en/latest/index.html
 
-DEBUG = False 
-POLLING_RATE = 2 # pollings per second
-POLLING_INTERVAL = 1 / POLLING_RATE # interval in seconds between each polling
-ACTIVITY_THRESHOLD = 10 # time in seconds without activity required to consider as idle
-EVALUATION_WINDOW = 15 * 60 # period in seconds of evaluations
-HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW # max length of deque
- 
+DEBUG = False
+POLLING_RATE = 2  # pollings per second
+POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
+ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle
+EVALUATION_WINDOW = 15 * 60  # period in seconds of evaluations
+HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
+
 """Detect desktop enviroment and initialize accordingly."""
+
+
 def get_desktop_env():
     # TODO: Detect if X11, Gnome or KDE Wayland.
     return "gnome"
 
+
 """Monitor user idleness."""
-class IdlenessMonitor():
+
+
+class IdlenessMonitor:
     def __init__(self, desktop_env):
         self.env = desktop_env
         self.history = deque(maxlen=HISTORY_SIZE)
 
     def get_idle_time(self):
-        if (self.env == "gnome"):
+        if self.env == "gnome":
             session_bus = dbus.SessionBus()
-            bus_object = session_bus.get_object('org.gnome.Mutter.IdleMonitor', '/org/gnome/Mutter/IdleMonitor/Core')
-            bus_interface = dbus.Interface(bus_object, 'org.gnome.Mutter.IdleMonitor')
+            bus_object = session_bus.get_object(
+                "org.gnome.Mutter.IdleMonitor", "/org/gnome/Mutter/IdleMonitor/Core"
+            )
+            bus_interface = dbus.Interface(bus_object, "org.gnome.Mutter.IdleMonitor")
             return bus_interface.GetIdletime() / 1000
 
         else:
@@ -53,11 +60,13 @@ class IdlenessMonitor():
         self.history.append(state)
         if DEBUG:
             print(state)
-    
+
     def evaluate_activeness(self):
         activeness_frequency = self.history.count("ACTIVE") / HISTORY_SIZE
-        print(f"Eudaemon: {activeness_frequency * 100 }% active in past {int(EVALUATION_WINDOW / 60)}m")
-        
+        print(
+            f"Eudaemon: {activeness_frequency * 100 }% active in past {int(EVALUATION_WINDOW / 60)}m"
+        )
+
 
 # TODO: Feed data to a time series database. e.g. Postgres TimeScale
 
@@ -77,10 +86,13 @@ class IdlenessMonitor():
 # Whatever you're doing prolly can wait till tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
 
 """ A clock that runs a sub-procedure at a periodic rate. """
+
+
 def clock(loop, delay, func, *func_args):
     args = [loop, delay, func]
     loop.call_later(delay, clock, *args)
     func(*func_args)
+
 
 def main():
     desktop_env = get_desktop_env()
@@ -91,7 +103,8 @@ def main():
     evaluation_args = [loop, EVALUATION_WINDOW, monitor.evaluate_activeness]
     loop.call_later(EVALUATION_WINDOW, clock, *evaluation_args)
     loop.run_forever()
-    loop.close() # not needed as the program doesn't terminate gracefully
+    loop.close()  # not needed as the program doesn't terminate gracefully
+
 
 if __name__ == "__main__":
     main()
