@@ -21,20 +21,17 @@ ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider
 EVALUATION_WINDOW = 15 * 60  # period in seconds of evaluations
 HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
 
-"""Detect desktop enviroment and initialize accordingly."""
-
 
 def get_desktop_env():
+    """Detect desktop enviroment and initialize accordingly."""
     # TODO: Detect if X11, Gnome or KDE Wayland.
     return "gnome"
 
 
-"""Send notification to Desktop Environment"""
-
-
 def notify_desktop(message) -> None:
+    """Send notification to Desktop Environment"""
     summary = "Eudaemon"
-    body = message 
+    body = message
     cmd_list = ["notify-send", summary, body]
 
     try:
@@ -43,10 +40,9 @@ def notify_desktop(message) -> None:
         print("Failed to send desktop notification.")
 
 
-"""Monitor user idleness"""
-
-
 class IdlenessMonitor:
+    """Monitor user idleness"""
+
     def __init__(self, desktop_env):
         self.env = desktop_env
         self.history = deque(maxlen=HISTORY_SIZE)
@@ -103,10 +99,9 @@ class IdlenessMonitor:
 
 # Whatever you're doing prolly can wait till tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
 
-""" A clock that runs a sub-procedure at a periodic rate. """
-
 
 def clock(loop, delay, func, *func_args):
+    """A clock that runs a sub-procedure at a periodic rate."""
     args = [loop, delay, func]
     loop.call_later(delay, clock, *args)
     func(*func_args)
