@@ -1,0 +1,10 @@
+[Unit]
+Description=Eudaemon
+Wants=default.target
+
+[Service]
+Type=simple
+ExecStart=eudaemon
+
+[Install]
+WantedBy=default.target
