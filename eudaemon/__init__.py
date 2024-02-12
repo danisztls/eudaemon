@@ -13,6 +13,10 @@ import dbus # https://dbus.freedesktop.org/doc/dbus-python/
 # TODO: dbus-python is deprecated, use dasbus instead
 # https://dasbus.readthedocs.io/en/latest/index.html
 
+POLLING_RATE = 2 # pollings per second
+POLLING_INTERVAL = 1 / POLLING_RATE # interval between each polling in seconds
+ACTIVITY_THRESHOLD = 3 # time in seconds without activity to register idleness
+
 """Detect desktop enviroment and initialize accordingly."""
 def get_desktop_env():
     # TODO: Detect if X11, Gnome or KDE Wayland.
@@ -37,7 +41,10 @@ class IdlenessMonitor():
 
     def print_idle(self):
         idle_time = self.get_idle_time()
-        print(idle_time)
+        if idle_time >= ACTIVITY_THRESHOLD:
+            print("IDLE")
+        else:
+            print("ACTIVE")
 
 # Warn
 
@@ -64,7 +71,7 @@ def main():
     desktop_env = get_desktop_env()
     monitor = IdlenessMonitor(desktop_env)
     loop = asyncio.new_event_loop()
-    args = [loop, 1, monitor.print_idle]
+    args = [loop, POLLING_INTERVAL, monitor.print_idle]
     loop.call_soon(clock, *args)
     loop.run_forever()
     loop.close() # not needed as the program doesn't terminate gracefully
