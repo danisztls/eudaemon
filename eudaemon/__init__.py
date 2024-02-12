@@ -29,7 +29,21 @@ def get_desktop_env():
     return "gnome"
 
 
-"""Monitor user idleness."""
+"""Send notification to Desktop Environment"""
+
+
+def notify_desktop(message) -> None:
+    summary = "Eudaemon"
+    body = message 
+    cmd_list = ["notify-send", summary, body]
+
+    try:
+        subprocess.run(cmd_list, check=True)
+    except OSError:
+        print("Failed to send desktop notification.")
+
+
+"""Monitor user idleness"""
 
 
 class IdlenessMonitor:
@@ -37,22 +51,24 @@ class IdlenessMonitor:
         self.env = desktop_env
         self.history = deque(maxlen=HISTORY_SIZE)
 
-    def get_idle_time(self):
+    def poll(self):
         if self.env == "gnome":
             session_bus = dbus.SessionBus()
             bus_object = session_bus.get_object(
                 "org.gnome.Mutter.IdleMonitor", "/org/gnome/Mutter/IdleMonitor/Core"
             )
             bus_interface = dbus.Interface(bus_object, "org.gnome.Mutter.IdleMonitor")
-            return bus_interface.GetIdletime() / 1000
+            idle_time = bus_interface.GetIdletime() / 1000
 
         else:
             # TODO: Use https://github.com/g0hl1n/xprintidle/ for X11
             # TODO: Use https://github.com/swaywm/swayidle for KDE Wayland
             raise Exception(f"Getting idle time for {self.env} isn't implemented")
 
-    def register_idleness(self):
-        idle_time = self.get_idle_time()
+        return idle_time
+
+    def store(self):
+        idle_time = self.poll()
         if idle_time >= ACTIVITY_THRESHOLD:
             state = "IDLE"
         else:
@@ -61,11 +77,13 @@ class IdlenessMonitor:
         if DEBUG:
             print(state)
 
-    def evaluate_activeness(self):
-        activeness_frequency = self.history.count("ACTIVE") / HISTORY_SIZE
-        print(
-            f"Eudaemon: {activeness_frequency * 100 }% active in past {int(EVALUATION_WINDOW / 60)}m"
-        )
+    def eval(self):
+        freq = self.history.count("ACTIVE") / HISTORY_SIZE
+        freq_str = "{:.2f}".format(freq * 100, 2)
+        interval_str = "{:.0f}".format(EVALUATION_WINDOW / 60)
+        message = f"{freq_str}% active in past {interval_str}m"
+        print(message)
+        notify_desktop(message)
 
 
 # TODO: Feed data to a time series database. e.g. Postgres TimeScale
@@ -98,10 +116,10 @@ def main():
     desktop_env = get_desktop_env()
     monitor = IdlenessMonitor(desktop_env)
     loop = asyncio.new_event_loop()
-    polling_args = [loop, POLLING_INTERVAL, monitor.register_idleness]
-    loop.call_soon(clock, *polling_args)
-    evaluation_args = [loop, EVALUATION_WINDOW, monitor.evaluate_activeness]
-    loop.call_later(EVALUATION_WINDOW, clock, *evaluation_args)
+    poll_args = [loop, POLLING_INTERVAL, monitor.store]
+    loop.call_soon(clock, *poll_args)
+    eval_args = [loop, EVALUATION_WINDOW, monitor.eval]
+    loop.call_later(EVALUATION_WINDOW, clock, *eval_args)
     loop.run_forever()
     loop.close()  # not needed as the program doesn't terminate gracefully
 
