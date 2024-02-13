@@ -73,7 +73,7 @@ class IdlenessMonitor:
 
     def eval(self):
         freq = self.history.count("ACTIVE") / HISTORY_SIZE
-        freq_str = "{:.2f}".format(freq * 100, 2)
+        freq_str = "{:.2f}".format(freq * 100)
         interval_str = "{:.0f}".format(EVALUATION_WINDOW / 60)
         message = f"{freq_str}% active in past {interval_str}m"
         print(message)
