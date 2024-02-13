@@ -5,9 +5,7 @@ Eudaemon: Monitor and log activity, improve awareness and empower user to improv
 """
 
 import asyncio
-import time
 import subprocess
-import os
 from collections import deque
 import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
 
