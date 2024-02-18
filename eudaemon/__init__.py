@@ -16,10 +16,10 @@ DEBUG = False
 POLLING_RATE = 2  # pollings per second
 POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
 ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle
-EVALUATION_WINDOW = 60 * 60  # length in seconds of the window used for evaluation 
-EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations 
+EVALUATION_WINDOW = 60 * 60  # length in seconds of the window used for evaluation
+EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations
 HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
-NOTIFICATION_THRESHOLD = 0.9 # 90%
+NOTIFICATION_THRESHOLD = 0.9  # 90%
 
 
 def get_desktop_env():
@@ -42,6 +42,7 @@ def notify_desktop(message) -> None:
 
 class IdlenessMonitor:
     """Monitor user idleness"""
+
     def __init__(self, desktop_env):
         self.env = desktop_env
         self.history = deque(maxlen=HISTORY_SIZE)
@@ -65,6 +66,7 @@ class IdlenessMonitor:
 
     def store(self):
         """Store idleness data in memory"""
+        # TODO: Store time data (use nanoseconds as unit)
         idle_time = self.poll()
         if idle_time >= ACTIVITY_THRESHOLD:
             state = "IDLE"
@@ -76,15 +78,19 @@ class IdlenessMonitor:
 
     def eval(self):
         """Evaluate if data fits notification trigger criteria."""
+        # TODO: Handle non-continuous data (e.g. when a machine is suspended)
         freq = self.history.count("ACTIVE") / HISTORY_SIZE
 
         if freq > NOTIFICATION_THRESHOLD:
             self.notify(freq)
 
     def notify(freq):
+        """Trigger user notification providing activty frequency and reminder to take a reak"""
         freq_str = "{:.2f}".format(freq * 100)
         interval_str = "{:.0f}".format(EVALUATION_WINDOW / 60)
-        message = f"{freq_str}% active in past {interval_str}m"
+        message = (
+            f"{freq_str}% active in past {interval_str}m.\nConsider taking a break."
+        )
         print(message)
         notify_desktop(message)
 
