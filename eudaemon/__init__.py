@@ -16,8 +16,10 @@ DEBUG = False
 POLLING_RATE = 2  # pollings per second
 POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
 ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle
-EVALUATION_WINDOW = 15 * 60  # period in seconds of evaluations
+EVALUATION_WINDOW = 60 * 60  # length in seconds of the window used for evaluation 
+EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations 
 HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
+NOTIFICATION_THRESHOLD = 0.9 # 90%
 
 
 def get_desktop_env():
@@ -75,6 +77,11 @@ class IdlenessMonitor:
     def eval(self):
         """Evaluate if data fits notification trigger criteria."""
         freq = self.history.count("ACTIVE") / HISTORY_SIZE
+
+        if freq > NOTIFICATION_THRESHOLD:
+            self.notify(freq)
+
+    def notify(freq):
         freq_str = "{:.2f}".format(freq * 100)
         interval_str = "{:.0f}".format(EVALUATION_WINDOW / 60)
         message = f"{freq_str}% active in past {interval_str}m"
@@ -113,8 +120,8 @@ def main():
     loop = asyncio.new_event_loop()
     poll_args = [loop, POLLING_INTERVAL, monitor.store]
     loop.call_soon(clock, *poll_args)
-    eval_args = [loop, EVALUATION_WINDOW, monitor.eval]
-    loop.call_later(EVALUATION_WINDOW, clock, *eval_args)
+    eval_args = [loop, EVALUATION_INTERVAL, monitor.eval]
+    loop.call_later(EVALUATION_INTERVAL, clock, *eval_args)
     loop.run_forever()
     loop.close()  # not needed as the program doesn't terminate gracefully
 
