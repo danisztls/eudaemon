@@ -89,22 +89,10 @@ class IdlenessMonitor:
         notify_desktop(message)
 
 
-# TODO: Feed data to a time series database. e.g. Postgres TimeScale
-
-# Warn
-
-# TODO: Send desktop notifications with libnotify
-
-# Act
-
 # Log Out
 # subprocess.run(["gnome-session-quit", "logout"])
 # subprocess.run(["gnome-session-quit", "logout --force"])
 # subprocess.run([ "dbus-send", "--session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1"])
-
-# Strings.
-
-# Whatever you're doing prolly can wait till tomorrow. Forcing yourself to be awaken doesn't make sense. Sooner or later you will have to sleep and this bad habit is unproductive and unhealthy.
 
 
 def clock(loop, delay, func, *func_args):
