@@ -40,12 +40,12 @@ def notify_desktop(message) -> None:
 
 class IdlenessMonitor:
     """Monitor user idleness"""
-
     def __init__(self, desktop_env):
         self.env = desktop_env
         self.history = deque(maxlen=HISTORY_SIZE)
 
     def poll(self):
+        """Poll the desktop environment for idleness"""
         if self.env == "gnome":
             session_bus = dbus.SessionBus()
             bus_object = session_bus.get_object(
@@ -62,6 +62,7 @@ class IdlenessMonitor:
         return idle_time
 
     def store(self):
+        """Store idleness data in memory"""
         idle_time = self.poll()
         if idle_time >= ACTIVITY_THRESHOLD:
             state = "IDLE"
@@ -72,6 +73,7 @@ class IdlenessMonitor:
             print(state)
 
     def eval(self):
+        """Evaluate if data fits notification trigger criteria."""
         freq = self.history.count("ACTIVE") / HISTORY_SIZE
         freq_str = "{:.2f}".format(freq * 100)
         interval_str = "{:.0f}".format(EVALUATION_WINDOW / 60)
