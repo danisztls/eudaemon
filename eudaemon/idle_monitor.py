@@ -45,6 +45,10 @@ class IdlenessMonitor:
     def store(self):
         """Store idleness data in memory"""
         # TODO: Store time data (use nanoseconds as unit)
+        # TODO: Rework idle/active detection
+        # Noisy input like small mouse movements caused by vibration will reset the idleness counter registering false activity.
+        # Instead of using an actitivity threshold which is good only to filter out small periods of inactivity it would be better to log raw data with high resolution and filter out those outliers. 
+        # I can do data smoothing or even use statistical methods like bayesian filters.
         idle_time = self.poll()
         if idle_time >= ACTIVITY_THRESHOLD:
             state = "IDLE"
