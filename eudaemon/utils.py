@@ -19,6 +19,21 @@ def notify_desktop(message) -> None:
         print("Failed to send desktop notification.")
 
 
+def poweroff(env: str):
+    """ "Power off the machine."""
+    if env == "gnome":
+        subprocess.run(["gnome-session-quit", "logout"])
+        # subprocess.run(["gnome-session-quit", "logout --force"])
+        # subprocess.run(
+        #     [
+        #         "dbus-send",
+        #         "--session --type=method_call --print-reply --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.Logout uint32:1",
+        #     ]
+        # )
+    else:
+        raise Exception(f"Power off from {env} isn't implemented")
+
+
 def clock(loop, delay, func, *func_args):
     """A clock that runs a sub-procedure at a periodic rate."""
     args = [loop, delay, func]
