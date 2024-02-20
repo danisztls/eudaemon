@@ -20,7 +20,7 @@ def notify_desktop(message) -> None:
 
 
 def poweroff(env: str):
-    """ "Power off the machine."""
+    """Power off the machine."""
     if env == "gnome":
         subprocess.run(["gnome-session-quit", "logout"])
         # subprocess.run(["gnome-session-quit", "logout --force"])
