@@ -10,6 +10,7 @@ from .idle_monitor import start as idle_monitor
 
 # TODO: Set monitor brightness based on local time of day using I2C.
 
+
 def main():
     idle_monitor()
 
