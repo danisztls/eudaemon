@@ -13,7 +13,7 @@ ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider
 EVALUATION_WINDOW = 60 * 60  # length in seconds of the window used for evaluation
 EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations
 HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
-NOTIFICATION_THRESHOLD = 0.9  # 90%
+NOTIFICATION_THRESHOLD = 0.75  # 90%
 
 
 class IdlenessMonitor:
