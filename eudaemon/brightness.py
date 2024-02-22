@@ -2,10 +2,11 @@ import time
 import subprocess
 import datetime
 import re
-from .utils import notify_desktop
+import asyncio
+from .utils import clock, notify_desktop
 
-POLL_FREQ = 15 * 60  # 15 minutes
-STEPS_N = 10  # smoothing steps
+UPDATE_INTERVAL = 15 * 60  #  time in seconds between updates
+STEPS_N = 10  # number of update smoothing steps
 
 
 def check_env() -> bool:
@@ -82,9 +83,16 @@ def manage_brightness():
     set_brightness(target)
 
 
+loop = asyncio.new_event_loop()
+
 def start() -> None:
-    # TODO: Run periodically (every POLL_FREQ)
-    manage_brightness()
+    args = [loop, UPDATE_INTERVAL, manage_brightness]
+    loop.call_soon(clock, *args)
+    loop.run_forever()
+
+
+def stop():
+    loop.close()
 
 
 def main() -> None:
@@ -92,6 +100,7 @@ def main() -> None:
         return
 
     start()
+    stop()
 
 
 if __name__ == "__main__":

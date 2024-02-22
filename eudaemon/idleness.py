@@ -15,8 +15,6 @@ EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations
 HISTORY_SIZE = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
 NOTIFICATION_THRESHOLD = 0.9  # 90%
 
-loop = asyncio.new_event_loop()
-
 
 class IdlenessMonitor:
     """Monitor user idleness"""
@@ -75,6 +73,9 @@ class IdlenessMonitor:
         )
         print(message)
         notify_desktop(message)
+
+
+loop = asyncio.new_event_loop()
 
 
 def start():
