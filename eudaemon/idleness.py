@@ -6,7 +6,7 @@ from .utils import clock, notify_desktop, get_desktop_env
 # TODO: dbus-python is deprecated, use dasbus instead
 # https://dasbus.readthedocs.io/en/latest/index.html
 
-DEBUG = True
+DEBUG = False 
 POLLING_RATE = 2  # pollings per second
 POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
 ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle

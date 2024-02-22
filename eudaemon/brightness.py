@@ -5,6 +5,7 @@ import re
 import asyncio
 from .utils import clock, notify_desktop
 
+DEBUG = False
 UPDATE_INTERVAL = 15 * 60  #  time in seconds between updates
 STEPS_N = 10  # number of update smoothing steps
 
@@ -84,6 +85,7 @@ def manage_brightness():
 
 
 loop = asyncio.new_event_loop()
+
 
 def start() -> None:
     args = [loop, UPDATE_INTERVAL, manage_brightness]
