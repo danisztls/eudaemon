@@ -13,6 +13,8 @@ dbus-python = "^1.3.2"
 
 [tool.poetry.scripts]
 eudaemon = 'eudaemon:main'
+eudaemon-idleness = 'eudaemon.idle_monitor:main'
+eudaemon-brightness = 'eudaemon.brightness_monitor:main'
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
