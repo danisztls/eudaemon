@@ -3,8 +3,8 @@ from collections import deque
 import dbus  # https://dbus.freedesktop.org/doc/dbus-python/
 from .utils import clock, notify_desktop, get_desktop_env
 
-# TODO: dbus-python is deprecated, use dasbus instead
-# https://dasbus.readthedocs.io/en/latest/index.html
+# TODO: dbus-python is deprecated, use dbus-fast instead
+# https://github.com/Bluetooth-Devices/dbus-fast
 
 DEBUG = False 
 POLLING_RATE = 2  # pollings per second
