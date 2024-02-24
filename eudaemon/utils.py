@@ -1,4 +1,6 @@
 import subprocess
+import time
+import asyncio
 
 
 def get_desktop_env():
@@ -34,8 +36,23 @@ def poweroff(env: str):
         raise Exception(f"Power off from {env} isn't implemented")
 
 
-def clock(loop, delay, func, *func_args):
-    """A clock that runs a sub-procedure at a periodic rate."""
-    args = [loop, delay, func]
-    loop.call_later(delay, clock, *args)
-    func(*func_args)
+def run_periodic_task(loop, delay, func, *args):
+    """Run a function periodically without drifting."""
+    start = time.monotonic()
+    while True:
+        now = time.monotonic()
+        error = (now - start) % delay
+        time.sleep(max(0, delay - error))
+        loop.create_task(func(*args))
+
+
+async def run_periodic_task_async(background_tasks, delay, func, *args):
+    """Run an async function periodically without blocking or drifting."""
+    start = time.monotonic()
+    while True:
+        now = time.monotonic()
+        error = (now - start) % delay
+        await asyncio.sleep(max(0, delay - error))
+        task = asyncio.create_task(func(*args))
+        background_tasks.add(task)
+        task.add_done_callback(background_tasks.discard)

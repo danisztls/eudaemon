@@ -3,7 +3,7 @@ import subprocess
 import datetime
 import re
 import asyncio
-from .utils import clock, notify_desktop
+from .utils import run_periodic_task, notify_desktop
 
 DEBUG = False
 UPDATE_INTERVAL = 15 * 60  #  time in seconds between updates
@@ -89,7 +89,7 @@ loop = asyncio.new_event_loop()
 
 def start() -> None:
     args = [loop, UPDATE_INTERVAL, manage_brightness]
-    loop.call_soon(clock, *args)
+    loop.call_soon(run_periodic_task, *args)
     loop.run_forever()
 
 

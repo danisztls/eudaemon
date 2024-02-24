@@ -9,7 +9,7 @@ license = "GPLv3"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-dbus-python = "^1.3.2"
+dbus-fast = "^2.21.1"
 
 [tool.poetry.scripts]
 eudaemon = 'eudaemon:main'
