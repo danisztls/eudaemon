@@ -1,10 +1,11 @@
+import os
 import asyncio
 import threading
 from collections import deque
 from dbus_fast.aio import MessageBus  # https://dbus-fast.readthedocs.io/
 from .utils import run_periodic_task_async, notify_desktop, get_desktop_env
 
-DEBUG = False 
+DEBUG = os.environ.get("EUDAEMON_DEBUG", False) 
 POLLING_RATE = 2  # pollings per second
 POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
 ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle

@@ -1,3 +1,4 @@
+import os
 import time
 import subprocess
 import datetime
@@ -5,7 +6,7 @@ import re
 import asyncio
 from .utils import run_periodic_task, notify_desktop
 
-DEBUG = False
+DEBUG = os.environ.get("EUDAEMON_DEBUG", False) 
 UPDATE_INTERVAL = 15 * 60  #  time in seconds between updates
 STEPS_N = 10  # number of update smoothing steps
 
