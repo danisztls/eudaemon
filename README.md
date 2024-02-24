@@ -37,24 +37,52 @@ Also there are tools to block certain sites and programs while allowing usage on
 
 [Blue light exposure](https://en.wikipedia.org/wiki/Biological_effects_of_high-energy_visible_light) outside of daytime messes with our [circadian rhythm](https://en.wikipedia.org/wiki/Circadian_rhythm) making us sleeper later than we should. Tools like *f.lux* and *GNOME Night Light* change the color temperature of the screen making colors warmer. Thought that is only half of the equation. Reducing screen brightness at night also helps and don't impair as much color perception and comfort.
 
+## Features 
+
+- No GUI. Runs on the background.
+- It isn't a chore to use.
+- Empowers user by notifying instead of acting on its own.
+
+## Roadmap
+
+- [x] Automatic Monitor Brightness Adjustment
+    - [ ] Local sunrise/sunset times 
+- [x] Activity Monitor
+    - [x] Reminders to take a break 
+    - [ ] Improved data processing
+    - [ ] Store/export time-series data
+- [ ] YAML configuration
+
 ## Caveats
 
-- It's on a very early stage.
-- As it's now, it's non-functional.
-- It does not really know your needs and state.
-- It's efficacy limited by user desire for change.
+- It's on an early stage of development.
+- It does not really know your true needs and state.
+- Efficacy is limited by your desire to change something.
 
-## Features
+## Install
 
-- Runs on the background without GUI.
-- Empowers user by notifying instead of acting on it's own.
-- It's not a chore to use.
-- Supports Gnome on X11/Wayland and any DE/WM on X11.
-- Export data to TSDB for analytics and additional monitoring.
-- Extensive declarative configuration.
+`pipx eudaemon`
+
+or use the [AUR package](https://aur.archlinux.org/packages/eudaemon-git).
 
 ## Usage
-...
+
+Start systemd service: `systemctl --user start eudaemon`
+
+_(if not using the AUR pkg you will have to manually copy the service file)_ 
+
+Or run:
+
+```sh
+# all
+eudaemon
+
+# only activity monitor
+eudaemon-idleness
+
+# only display brightness monitor
+eudaemon-brightness
+```
 
 ## Configuration
 ...
