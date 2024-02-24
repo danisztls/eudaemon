@@ -1,1 +1,6 @@
+# python cache
 **/__pycache__
+
+# dist artifacts
+**/eudaemon-*.whl
+**/eudaemon-*.tar.gz
