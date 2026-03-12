@@ -17,7 +17,7 @@ eudaemon-idleness = 'eudaemon.idleness:main'
 eudaemon-brightness = 'eudaemon.brightness:main'
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.2.0"
+black = ">=24.2,<27.0"
 
 [build-system]
 requires = ["poetry-core"]
