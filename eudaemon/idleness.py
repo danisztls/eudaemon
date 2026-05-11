@@ -2,8 +2,10 @@ import asyncio
 from collections import deque
 from dbus_fast.aio import MessageBus  # https://dbus-fast.readthedocs.io/
 import os
+import sys
 import threading
 from .utils import get_desktop_env, notify_desktop, run_periodic_task_async
+
 
 DEBUG = os.environ.get("EUDAEMON_DEBUG", False)
 POLLING_RATE = 2  # pollings per second
@@ -11,25 +13,28 @@ POLLING_INTERVAL = 1 / POLLING_RATE  # interval in seconds between each polling
 ACTIVITY_THRESHOLD = 10  # time in seconds without activity required to consider as idle
 EVALUATION_WINDOW = 60 * 60  # length in seconds of the window used for evaluation
 EVALUATION_INTERVAL = 10 * 60  # time in seconds between evaluations
+NOTIFICATION_THRESHOLD = 0.75  # percent
 HISTORY_LENGTH = POLLING_RATE * EVALUATION_WINDOW  # max length of deque
 HISTORY_BUFFER = deque(maxlen=HISTORY_LENGTH)
-NOTIFICATION_THRESHOLD = 0.75  # percent
 DESKTOP_ENV = get_desktop_env()
-
 LOOP = asyncio.new_event_loop()
 TASKS = set()
+BUS = None
+
 
 async def init_dbus_interface():
     """Init D-Bus for polling"""
     try:
-        bus = await MessageBus().connect()
+        # TODO: Make this a class to better manage it instead of relying on globals
+        global BUS
+        BUS = await MessageBus().connect()
 
         if DESKTOP_ENV == "gnome":
-            introspection = await bus.introspect(
+            introspection = await BUS.introspect(
                 "org.gnome.Mutter.IdleMonitor", "/org/gnome/Mutter/IdleMonitor/Core"
             )
 
-            proxy_object = bus.get_proxy_object(
+            proxy_object = BUS.get_proxy_object(
                 "org.gnome.Mutter.IdleMonitor",
                 "/org/gnome/Mutter/IdleMonitor/Core",
                 introspection,
@@ -68,7 +73,18 @@ def store(idle_time):
         state = "ACTIVE"
     HISTORY_BUFFER.append(state)
     if DEBUG:
-        print(state)
+        print(state)    except KeyboardInterrupt:
+        print('Aborted manually.', file=sys.stderr)
+        return 1
+
+    except Exception as err:
+        # (in real code the `except` would probably be less broad)
+        # Turn exceptions into appropriate logs and/or console output.
+
+        # non-zero return code to signal error
+        # Can of course be more fine grained than this general
+        # "something went wrong" code.
+        return 1
 
 
 async def evaluate():
@@ -94,18 +110,36 @@ def start_poll():
 def start_eval():
     asyncio.run(run_periodic_task_async(TASKS, EVALUATION_INTERVAL, evaluate))
 
+thread_poll = threading.Thread(target=start_poll)
+thread_eval = threading.Thread(target=start_eval)
+
+# TODO: Just use daemon mode?
+# https://stackoverflow.com/questions/58910372/script-stuck-on-exit-when-using-atexit-to-terminate-threads
 def start():
     """Start threads"""
-    thread_poll = threading.Thread(target=start_poll)
-    thread_eval = threading.Thread(target=start_eval)
     thread_eval.start()
     thread_poll.start()
+
+async def stop():
+    """Terminate threads and close bus"""
+    await BUS.wait_for_disconnect()
     thread_poll.join()
     thread_eval.join()
 
-    
 def main():
-    start()
+    try:
+        start()
+
+    except KeyboardInterrupt:
+        print('Aborted manually.')
+        sys.exit(1)
+
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
+    finally:
+        asyncio.run(stop())
 
 if __name__ == "__main__":
     main()
